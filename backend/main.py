@@ -12,23 +12,23 @@ load_dotenv()
 
 app = FastAPI()
 
-# ✅ Load environment variables
+#  Load environment variables
 SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search"
 SPOTIFY_ACCESS_TOKEN = None
 
-# ✅ Load trained sentiment model
+# Load trained sentiment model
 MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../models")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 sentiment_pipeline = pipeline("sentiment-analysis", model=MODEL_DIR, device=0 if torch.cuda.is_available() else -1)
 
-# ✅ Request model
+#  Request model
 class SearchRequest(BaseModel):
     name: str
 
-# ✅ Function to get a new access token
+#  Function to get a new access token
 def get_spotify_token():
     global SPOTIFY_ACCESS_TOKEN
     auth_response = requests.post(
@@ -41,13 +41,13 @@ def get_spotify_token():
     else:
         raise HTTPException(status_code=500, detail="Failed to retrieve Spotify token")
 
-# ✅ Sentiment Analysis Function
+# Sentiment Analysis Function
 def analyze_sentiment(text: str) -> str:
     result = sentiment_pipeline(text)[0]
     label_map = {"LABEL_0": "negative", "LABEL_1": "neutral", "LABEL_2": "positive"}
     return label_map.get(result['label'], "neutral")
 
-# ✅ Search Playlist API
+#  Search Playlist API
 @app.post("/search_playlist")
 async def search_playlist(request: SearchRequest):
     global SPOTIFY_ACCESS_TOKEN
@@ -56,11 +56,11 @@ async def search_playlist(request: SearchRequest):
 
     headers = {"Authorization": f"Bearer {SPOTIFY_ACCESS_TOKEN}"}
     
-    # ✅ Analyze Sentiment
+    # Analyze Sentiment
     sentiment = analyze_sentiment(request.name)
     print(f"🔍 Sentiment detected: {sentiment}")
     
-    # ✅ Adjust search term based on sentiment
+    #  Adjust search term based on sentiment
     search_term = request.name
     if sentiment == "positive":
         search_term = f"{request.name} happy"
