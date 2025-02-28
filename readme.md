@@ -1,7 +1,6 @@
 # VibeTunes: Your Mood-Based Spotify Playlist Finder 🎶
 
-![VibeTunes Logo Placeholder](images/vibetunes_logo.png)
-_Add your application's logo here._
+
 
 ## Overview
 
