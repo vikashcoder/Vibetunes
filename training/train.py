@@ -7,7 +7,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trai
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
-# ✅ Define constants
+#  Define constants
 MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment"  # Better pretrained model
 OUTPUT_DIR = "models"
 DATA_PATH = "../data/sentiment_dataset.csv"  # Update with dataset choice
@@ -15,7 +15,7 @@ USE_HUGGINGFACE_DATASET = False  # Toggle between CSV dataset and Hugging Face d
 HUGGINGFACE_DATASET_NAME = "imdb"  # Example dataset
 DATASET_SAMPLE_SIZE = 10000  # Limit dataset size for faster training
 
-# ✅ Load dataset dynamically
+#  Load dataset dynamically
 def load_data():
     if USE_HUGGINGFACE_DATASET:
         dataset = load_dataset(HUGGINGFACE_DATASET_NAME)
@@ -40,18 +40,18 @@ def load_data():
         })
     return dataset
 
-# ✅ Tokenization function
+#  Tokenization function
 def tokenize_function(examples):
     return tokenizer(examples["text"], padding=True, truncation=True, max_length=512)
 
-# ✅ Load tokenizer and model
+#  Load tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=3)
 
 dataset = load_data()
 tokenized_datasets = dataset.map(tokenize_function, batched=True, remove_columns=["text"]).with_format("torch")
 
-# ✅ Training arguments
+#  Training arguments
 training_args = TrainingArguments(
     output_dir=OUTPUT_DIR,
     evaluation_strategy="epoch",
@@ -73,7 +73,7 @@ def compute_metrics(eval_pred):
     acc = accuracy_score(labels, predictions)
     return {'accuracy': acc, 'f1': f1, 'precision': precision, 'recall': recall}
 
-# ✅ Initialize Trainer
+#  Initialize Trainer
 trainer = Trainer(
     model=model,
     args=training_args,
@@ -83,16 +83,16 @@ trainer = Trainer(
     compute_metrics=compute_metrics,
 )
 
-# ✅ Train the model
+#  Train the model
 trainer.train()
 
-# ✅ Save model & tokenizer
+#  Save model & tokenizer
 trainer.save_model(OUTPUT_DIR)
 tokenizer.save_pretrained(OUTPUT_DIR)
 
 print(f"✅ Training complete. Model saved to {OUTPUT_DIR}")
 
-# ✅ Test Sentiment Predictions
+#  Test Sentiment Predictions
 sample_texts = dataset["validation"]["text"][:2]  # Take two validation samples
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
