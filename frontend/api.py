@@ -10,7 +10,7 @@ BACKEND_URL = "http://localhost:8000"  # Change this to your deployment URL
 
 st.set_page_config(page_title="VibeTunes - Mood-Based Playlist Finder", page_icon="🎵", layout="centered")
 
-# 🎨 Custom CSS for animations and styling
+#  Custom CSS for animations and styling
 st.markdown(
     """
     <style>
@@ -92,12 +92,12 @@ st.markdown(
 
 st.markdown("<div class='title'>🎶 VibeTunes: Discover Playlists That Match Your Mood</div>", unsafe_allow_html=True)
 
-# ✅ Load trained sentiment model
+#  Load trained sentiment model
 MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../models")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 sentiment_pipeline = pipeline("sentiment-analysis", model=MODEL_DIR, device=0 if torch.cuda.is_available() else -1)
 
-# ✅ Sentiment Analysis Function
+#  Sentiment Analysis Function
 def analyze_sentiment(text: str) -> str:
     result = sentiment_pipeline(text)[0]
     label_map = {"LABEL_0": "Negative", "LABEL_1": "Neutral", "LABEL_2": "Positive"}
@@ -105,7 +105,7 @@ def analyze_sentiment(text: str) -> str:
 
 playlist_name = st.text_area("🎤 How are you feeling today? Share your vibe:")
 
-# ✅ Show detected sentiment with animation
+#  Show detected sentiment with animation
 if playlist_name:
     sentiment = analyze_sentiment(playlist_name)
     sentiment_class = "positive" if sentiment == "Positive" else "neutral" if sentiment == "Neutral" else "negative"
